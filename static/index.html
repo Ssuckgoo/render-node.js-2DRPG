@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>던전 파티</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/galmuri.css">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- 첫 화면 -->
+<section id="home" class="screen">
+  <h1 class="logo">던전 파티</h1>
+  <p class="sub">1~4인 협동 던전 액션 RPG</p>
+  <div class="box home-box">
+    <label>닉네임 <input id="name" maxlength="10" placeholder="모험가"></label>
+    <button id="btn-create" class="btn primary">방 만들기</button>
+    <div class="join-row">
+      <input id="code" maxlength="4" placeholder="방 코드">
+      <button id="btn-join" class="btn">입장</button>
+    </div>
+    <p id="home-err" class="err"></p>
+  </div>
+  <p class="hint">마우스를 누르고 있으면 이동 · Q W E R 스킬 · I 가방 · K 스킬 · Esc 위장 화면</p>
+</section>
+
+<!-- 로비 -->
+<section id="lobby" class="screen" hidden>
+  <div class="lobby-head">
+    <h2>방 코드 <span id="lobby-code" class="code"></span></h2>
+    <button id="btn-copy" class="btn small">초대 링크 복사</button>
+  </div>
+  <div id="lobby-players" class="lobby-players"></div>
+  <h3>직업 선택</h3>
+  <div id="class-list" class="class-list"></div>
+  <div class="lobby-actions">
+    <button id="btn-ready" class="btn">준비</button>
+    <button id="btn-start" class="btn primary">시작</button>
+  </div>
+</section>
+
+<!-- 게임 -->
+<section id="game" class="screen" hidden>
+  <header class="topbar">
+    <span class="logo-s">던전 파티</span>
+    <span id="top-info"></span>
+    <span class="spacer"></span>
+    <span id="top-code" class="code"></span>
+  </header>
+  <div class="main">
+    <div class="stage-wrap">
+      <canvas id="cv" width="960" height="540"></canvas>
+      <div id="notice" class="notice"></div>
+      <div id="win-inv" class="win" hidden>
+        <div class="win-head"><b>가방</b><span class="spacer"></span><span class="muted">I</span><button class="x" data-close="inv">✕</button></div>
+        <div class="win-body inv-win">
+          <div class="doll-col">
+            <div id="doll" class="doll"></div>
+            <div id="inv-stats" class="inv-stats"></div>
+          </div>
+          <div class="bag-col">
+            <div class="bag-head"><span id="inv-gold" class="gold"></span><span id="inv-count" class="muted"></span>
+              <span class="spacer"></span><button class="btn small" id="btn-sort">정렬</button></div>
+            <div id="bag" class="bag"></div>
+            <div id="trash" class="trash">여기로 끌어 놓으면 바닥에 버립니다</div>
+            <p class="muted tip-line">우클릭: 장착/해제 (상점에선 판매) · 끌어서 장착</p>
+          </div>
+        </div>
+      </div>
+      <div id="win-skill" class="win" hidden>
+        <div class="win-head"><b>스킬</b><span id="sp-left" class="sp"></span><span class="spacer"></span><span class="muted">K</span><button class="x" data-close="skill">✕</button></div>
+        <div id="skill-body" class="win-body skill-win"></div>
+      </div>
+      <div id="win-npc" class="win npc" hidden>
+        <div class="win-head"><b id="npc-title"></b><span class="spacer"></span><button class="x" data-close="npc">✕</button></div>
+        <div id="npc-body" class="win-body"></div>
+      </div>
+      <div id="tip" class="tip" hidden></div>
+    </div>
+    <aside class="side">
+      <div id="log" class="log"></div>
+      <div class="chat">
+        <div id="chat-log" class="chat-log"></div>
+        <input id="chat-in" maxlength="120" placeholder="채팅 (Enter)">
+      </div>
+    </aside>
+  </div>
+  <div id="panel" class="panel"></div>
+</section>
+
+<div id="toast" class="toast" hidden></div>
+
+<!-- 위장 화면 (Esc) -->
+<div id="boss" hidden>
+  <div class="doc">
+    <h1>주간 업무 회의록</h1>
+    <table>
+      <tr><th>일시</th><td id="boss-date"></td></tr>
+      <tr><th>참석자</th><td>팀장, 선임, 담당자</td></tr>
+      <tr><th>안건</th><td>4분기 업무 계획 및 진행 현황 점검</td></tr>
+    </table>
+    <h2>1. 진행 현황</h2>
+    <ul>
+      <li>시스템 고도화 1차 개발 완료, 통합 테스트 진행 중 (진척률 78%)</li>
+      <li>운영 이슈 3건 중 2건 조치 완료, 1건 원인 분석 중</li>
+      <li>협력사 일정 협의 결과 차주 수요일 중간 점검 예정</li>
+    </ul>
+    <h2>2. 논의 사항</h2>
+    <ul>
+      <li>테스트 시나리오 보완 필요 — 예외 케이스 추가 검토</li>
+      <li>데이터 이관 일정 조정 여부 확인 후 재공유</li>
+      <li>연말 리소스 배분 계획 초안 작성</li>
+    </ul>
+    <h2>3. 향후 일정</h2>
+    <ul>
+      <li>통합 테스트 완료: 차주 금요일</li>
+      <li>결과 보고: 익월 첫째 주</li>
+    </ul>
+  </div>
+</div>
+
+<script src="/static/sprites.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>
